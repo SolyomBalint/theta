@@ -1,0 +1,8 @@
+tool		Theta 5.1.1	Theta 5.1.1	Theta 5.1.1	Theta 5.1.1
+run set		SV-COMP24_unreach-call.ReachSafety-Recursive	SV-COMP24_unreach-call.ReachSafety-Recursive	SV-COMP24_unreach-call.ReachSafety-Recursive	SV-COMP24_unreach-call.ReachSafety-Recursive
+../sv-benchmarks/c/		status	cputime (s)	walltime (s)	memory (MB)
+recursive-simple/id_o100.yml	false	false(unreach-call)	6.261469	2.7531960860000027	437.465088
+recursive-simple/id2_i5_o5-2.yml	true	false(unreach-call)	7.17314	3.060859121999954	463.413248
+recursified_nla-digbench/recursified_geo2-ll.yml	true	ERROR (frontend failed)	1.818568	0.7492956179999624	156.979200
+recursive/recHanoi03-2.yml	true	false(unreach-call)	5.888518	2.6768741129999967	402.108416
+recursified_nla-digbench/recursified_lcm2.yml	true	ERROR (frontend failed)	1.821659	0.7357254340000168	162.275328

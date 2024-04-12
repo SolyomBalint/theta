@@ -1,0 +1,8 @@
+tool		Theta 5.1.1	Theta 5.1.1	Theta 5.1.1	Theta 5.1.1
+run set		SV-COMP24_unreach-call.ReachSafety-XCSP	SV-COMP24_unreach-call.ReachSafety-XCSP	SV-COMP24_unreach-call.ReachSafety-XCSP	SV-COMP24_unreach-call.ReachSafety-XCSP
+../sv-benchmarks/c/xcsp/		status	cputime (s)	walltime (s)	memory (MB)
+CostasArray-14.yml	false	TIMEOUT (Parsing OK)	120.958288	101.12604506299999	899.936256
+Dubois-025.yml	true	TIMEOUT (Parsing OK)	120.714149	95.32471240399997	3043.360768
+aim-100-2-0-unsat-4.yml	true	TIMEOUT (Parsing OK)	120.169438	93.87595525	3328.647168
+AllInterval-014.yml	false	TIMEOUT (Parsing OK)	120.380812	105.18813185199997	673.734656
+AllInterval-005.yml	false	false(unreach-call)	7.661787	3.1550988200000347	429.830144
