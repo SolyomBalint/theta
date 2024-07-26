@@ -27,3 +27,5 @@ xcfa.c
 xcfa.dot
 xcfa.json
 *.plantuml
+
+**/bin/
