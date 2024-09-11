@@ -29,6 +29,7 @@ import hu.bme.mit.theta.xta.XtaProcess.Loc;
 import java.lang.management.LockInfo;
 import java.util.*;
 
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -38,10 +39,12 @@ public final class XtaSystem {
 	private final Collection<VarDecl<?>> dataVars;
 	private final Collection<VarDecl<RatType>> clockVars;
 	private final MutableValuation initVal;
+    private final HashMap<XtaProcess, Collection<VarDecl<RatType>>> processClockMap;
 
 	private final List<XtaProcess> unmodProcesses;
 	private final Collection<VarDecl<?>> unmodDataVars;
 	private final Collection<VarDecl<RatType>> unmodClockVars;
+    private final Map<XtaProcess, Collection<VarDecl<RatType>>> unmodProcessClockMap;
 
 
 	private Expr<BoolType> prop;
@@ -52,10 +55,12 @@ public final class XtaSystem {
 		dataVars = Containers.createSet();
 		clockVars = Containers.createSet();
 		initVal = new MutableValuation();
+        processClockMap = new HashMap<>();
 
 		unmodProcesses = Collections.unmodifiableList(processes);
 		unmodDataVars = Collections.unmodifiableCollection(dataVars);
 		unmodClockVars = Collections.unmodifiableCollection(clockVars);
+        unmodProcessClockMap = Collections.unmodifiableMap(processClockMap);
 	}
 
 	public static XtaSystem create() {
@@ -73,6 +78,9 @@ public final class XtaSystem {
 	public Collection<VarDecl<RatType>> getClockVars() {
 		return unmodClockVars;
 	}
+    public Map<XtaProcess,Collection<VarDecl<RatType>>> getProcessClockMap() {
+        return unmodProcessClockMap;
+    }
 
 	// TODO Return value is not immutable
 	public Valuation getInitVal() {
@@ -143,4 +151,22 @@ public final class XtaSystem {
 	public enum PropertyKind {
 		AG, AF, EG, EF, NONE
 	}
+    public void addLocalClockVar(final XtaProcess process, final VarDecl<RatType> varDecl) {
+        checkNotNull(varDecl);
+        checkArgument(!dataVars.contains(varDecl));
+        checkNotNull(process);
+
+        // the `checkNotNull` function throws an exception which should be handled
+        // however exception handling is expensive, also here it's a valid scenario
+        // to get a null for processClocks, hence the manual null checking.
+        Collection<VarDecl<RatType>> processClocks = processClockMap.get(process);
+        if(processClocks != null)
+            processClocks.add(varDecl);
+        else {
+            // This could be done in one line, but java sucks
+            HashSet<VarDecl<RatType>> inputClockSet = new HashSet<>();
+            inputClockSet.add(varDecl);
+            processClockMap.put(process, Containers.createSet(inputClockSet));
+        }
+    }
 }
