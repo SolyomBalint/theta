@@ -29,7 +29,6 @@ import hu.bme.mit.theta.xta.XtaProcess.Loc;
 import java.lang.management.LockInfo;
 import java.util.*;
 
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
