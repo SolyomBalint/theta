@@ -55,6 +55,18 @@ public final class XtaProcess {
         unmodEdges = Collections.unmodifiableCollection(edges);
     }
 
+    private XtaProcess(final XtaProcess process){
+        checkNotNull(process);
+
+        this.name = process.name;
+        this.system = process.system;
+        this.locs = process.locs;
+        this.edges = process.edges;
+        this.initLoc = process.initLoc;
+        this.unmodLocs = process.unmodLocs;
+        this.unmodEdges = process.unmodEdges;
+    }
+
     static XtaProcess create(final XtaSystem system, final String name) {
         return new XtaProcess(system, name);
     }
@@ -185,6 +197,11 @@ public final class XtaProcess {
             builder.add(update);
         }
         return builder.build();
+    }
+
+    public static XtaProcess copyOf(final XtaProcess process) {
+        checkNotNull(process);
+        return new XtaProcess(process);
     }
 
     ////

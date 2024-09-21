@@ -65,7 +65,7 @@ import hu.bme.mit.theta.core.clock.op.ShiftOp;
 import hu.bme.mit.theta.core.decl.VarDecl;
 import hu.bme.mit.theta.core.type.rattype.RatType;
 
-final class DBM {
+public final class DBM {
 
 	private static final IntBinaryOperator ZERO_DBM_VALUES = (x, y) -> Leq(0);
 	private static final IntBinaryOperator TOP_DBM_VALUES = BasicDbm::defaultBound;
