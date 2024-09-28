@@ -95,6 +95,16 @@ public class LocalZoneState implements ExprState {
         return toReturn;
     }
 
+    // TODO had to remove ? extends here as well
+    public static LocalZoneState zero(final Map<XtaProcess, Collection<VarDecl<RatType>>> clocksProcessMap) {
+        Map<XtaProcess, DBM> tmp = Containers.createMap();
+        for (var mapping : clocksProcessMap.entrySet()){
+            tmp.put(mapping.getKey(), DBM.zero(mapping.getValue()));
+        }
+
+        return new LocalZoneState(tmp);
+    }
+
     public static LocalZoneState intersection(final LocalZoneState zone1, final LocalZoneState zone2) {
         // This may add an unnecessary function call to the mix, but it saves lots of coding lines, later it would be
         // good to check the technical options
@@ -168,23 +178,25 @@ public class LocalZoneState implements ExprState {
         return Utils.lispStringBuilder(getClass().getSimpleName()).aligned().addAll(constrs)
                 .toString();
     }
-    //TODO ask about this shit
-    //public Collection<LocalZoneState> complement() { for(var dbm : this.localDBMs.values()){ final Collection<DBM> dbms = dbm.complement(); dbms.stream().map(LocalZoneState::new).collect(toList());
+
+    // Descartes product maybe a solution TODO later call unsupported exception
+    // public Collection<LocalZoneState> complement() {
+    //     final Collection<DBM> dbms;
+    //     for (var mapping : this.localDBMs.entrySet()) {
+    //
     //     }
-    //         final Collection<DBM> dbms = dbm.complement();
-    //         return dbms.stream().map(LocalZoneState::new).collect(toList());
-    //     }
+    //     final Collection<DBM> dbms = dbm.complement();
+    //     return dbms.stream().map(ZoneState::new).collect(toList());
+    // }
 
     public Builder transform() {
         return Builder.transform(this);
     }
 
-    // TODO ask how this shit works
-    // public Builder project(final Collection<? extends VarDecl<RatType>> clocks) {
-    //     checkNotNull(clocks);
-    //     return Builder.project(this, clocks);
-    // }
-    //
+    public Builder project(final Map<XtaProcess, Collection<VarDecl<RatType>>> clocksProcessMap) {
+        checkNotNull(clocksProcessMap);
+        return Builder.project(this, clocksProcessMap);
+    }
 
     public boolean isTop() {
         for(var dbm : this.localDBMs.values()){
@@ -220,12 +232,15 @@ public class LocalZoneState implements ExprState {
         return true;
     }
 
-    // TODO ask how this shit works
-    // public boolean isLeq(final LocalZoneState that,
-    //                      final Collection<? extends VarDecl<RatType>> activeVars) {
-    //
-    //     return this.dbm.isLeq(that.dbm, activeVars);
-    // }
+    public boolean isLeq(final LocalZoneState that,
+                         final Map<XtaProcess, Collection<? extends VarDecl<RatType>>> activeVars) {
+
+        for (var varsMapping : activeVars.entrySet()){
+            if(!this.getDbmForProcess(varsMapping.getKey()).get().isLeq(that.getDbmForProcess(varsMapping.getKey()).get(), varsMapping.getValue()))
+                return false;
+        }
+        return true;
+    }
 
     public boolean isLeq(final LocalZoneState that, final BoundFunc boundFunction) {
         for(var mapping : this.localDBMs.entrySet()){
@@ -271,15 +286,17 @@ public class LocalZoneState implements ExprState {
             for(var mapping : state.localDBMs.entrySet()){
                 tmp.put(XtaProcess.copyOf(mapping.getKey()), DBM.copyOf(mapping.getValue()));
             }
-            // TODO ask if this tmp gets later deleted or how this works in java
             return new Builder(tmp);
         }
 
-        // TODO ask about this one
-        // private static Builder project(final ZoneState state,
-        //                                final Collection<? extends VarDecl<RatType>> clocks) {
-        //     return new Builder(DBM.project(state.dbm, clocks));
-        // }
+        private static Builder project(final LocalZoneState state,
+                                       final Map<XtaProcess, Collection<VarDecl<RatType>>> clocksProcessMap) {
+            Map<XtaProcess, DBM> tmp = Containers.createMap();
+            for( var varDeclMaps : clocksProcessMap.entrySet() ){
+                tmp.put(varDeclMaps.getKey(), DBM.project(state.getDbmForProcess(varDeclMaps.getKey()).get(), varDeclMaps.getValue()) );
+            }
+            return new Builder(tmp);
+        }
 
         ////
 
@@ -288,6 +305,16 @@ public class LocalZoneState implements ExprState {
         }
 
         ////
+
+        public Builder localUp(final XtaProcess proc) {
+            this.localDBMs.get(proc).up();
+            return this;
+        }
+
+        public Builder localDown(final XtaProcess proc) {
+            this.localDBMs.get(proc).down();
+            return this;
+        }
 
         public Builder up() {
             for(var dbm : this.localDBMs.values())
@@ -307,12 +334,14 @@ public class LocalZoneState implements ExprState {
             return this;
         }
 
+        //TODO ask about this lil guy
         public Builder execute(final ClockOp op) {
             for(var dbm : this.localDBMs.values())
                 dbm.execute(op);
             return this;
         }
 
+        //TODO the input of this may be wrong
         public Builder and(final ClockConstr constr) {
             for(var dbm : this.localDBMs.values())
                 dbm.and(constr);
@@ -333,6 +362,7 @@ public class LocalZoneState implements ExprState {
             return this;
         }
 
+        //TODO the input of this still may be wron
         public Builder copy(final VarDecl<RatType> lhs, final VarDecl<RatType> rhs) {
             for(var dbm : this.localDBMs.values())
                 dbm.copy(lhs, rhs);

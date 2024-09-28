@@ -66,8 +66,10 @@ public final class ZonePrec implements Prec {
 		return 31 * clocks.hashCode();
 	}
 
-	@Override
-	public Collection<VarDecl<?>> getUsedVars() { // This could be way more elegant
-		return clocks.stream().map(ratTypeVarDecl -> (VarDecl<?>) ratTypeVarDecl).collect(Collectors.toSet());
-	}
+    // TODO ask about this shit
+    @Override
+    public Collection<VarDecl<?>> getUsedVars() { // This could be way more elegant
+        return clocks.stream().map(ratTypeVarDecl -> (VarDecl<?>) ratTypeVarDecl)
+                .collect(Collectors.toSet());
+    }
 }

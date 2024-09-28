@@ -102,8 +102,9 @@ public final class XtaProcess {
         this.initLoc = loc;
     }
 
-    public Loc createLoc(final String name, final LocKind kind, final Collection<Expr<BoolType>> invars) {
-        final Loc loc = new Loc(name, kind, invars);
+    public Loc createLoc(final String name, final LocKind kind,
+                         final Collection<Expr<BoolType>> invars, XtaProcess proc) {
+        final Loc loc = new Loc(name, kind, invars, proc);
         locs.add(loc);
         return loc;
     }
@@ -216,13 +217,17 @@ public final class XtaProcess {
         private final String name;
         private final LocKind kind;
         private final Collection<Guard> invars;
+        private final XtaProcess proc;
+
 
         private final Collection<Edge> unmodInEdges;
         private final Collection<Edge> unmodOutEdges;
 
-        private Loc(final String name, final LocKind kind, final Collection<Expr<BoolType>> invars) {
+        private Loc(final String name, final LocKind kind,
+                    final Collection<Expr<BoolType>> invars, XtaProcess process) {
             inEdges = new ArrayList<>();
             outEdges = new ArrayList<>();
+            proc = process;
             this.name = checkNotNull(name);
             this.kind = checkNotNull(kind);
             this.invars = createGuards(invars);
@@ -249,6 +254,10 @@ public final class XtaProcess {
 
         public Collection<Guard> getInvars() {
             return invars;
+        }
+
+        public XtaProcess getProc() {
+            return proc;
         }
 
         @Override
