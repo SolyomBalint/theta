@@ -127,9 +127,9 @@ public final class XtaSystem {
 		//ErrorProcess
 		XtaProcess process = createProcess("ErrorProc");
 		final Collection<Expr<BoolType>> invars = Collections.emptySet();
-		Loc initloc = process.createLoc("InitLoc", XtaProcess.LocKind.NORMAL, invars);
+		Loc initloc = process.createLoc("InitLoc", XtaProcess.LocKind.NORMAL, invars, process);
 		process.setInitLoc(initloc);
-		Loc errorLoc = process.createLoc("ErrorLoc", XtaProcess.LocKind.ERROR, invars);
+		Loc errorLoc = process.createLoc("ErrorLoc", XtaProcess.LocKind.ERROR, invars, process);
 		final Collection<Expr<BoolType>> guards = ExprUtils.getConjuncts(ExprUtils.simplify(prop));
 		process.createEdge(initloc, errorLoc, guards, Optional.empty(), Collections.emptyList());
 
@@ -137,7 +137,7 @@ public final class XtaSystem {
 
 		for (XtaProcess proc: processes) {
 			if (!proc.getName().equals("ErrorProc")) {
-				Loc own_errorLoc = proc.createLoc("ErrorLoc", XtaProcess.LocKind.ERROR, invars);
+				Loc own_errorLoc = proc.createLoc("ErrorLoc", XtaProcess.LocKind.ERROR, invars, proc);
 				for (Loc loc:proc.getLocs() ) {
 					if(loc.getKind().equals(XtaProcess.LocKind.COMMITTED))
 						proc.createEdge(loc, own_errorLoc, guards, Optional.empty(),Collections.emptyList());

@@ -82,7 +82,7 @@ final class XtaStateSymbol implements Symbol {
 			invars = conjuncts.stream().map(e -> e).collect(toList());
 		}
 
-		final Loc loc = process.createLoc(process.getName() + "_" + name, kind, invars);
+		final Loc loc = process.createLoc(process.getName() + "_" + name, kind, invars, process);
 		return loc;
 	}
 
